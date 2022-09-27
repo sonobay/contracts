@@ -4,9 +4,10 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "../market/IMarket.sol";
 
-contract Listing is Ownable, Initializable {
+contract Listing is Ownable, Initializable, ERC1155Holder {
     uint256 private _price;
     address private _seller;
     uint256 private _totalAmount;

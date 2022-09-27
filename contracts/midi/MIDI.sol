@@ -4,10 +4,9 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./IMIDI.sol";
 
-// import "@openzeppelin/contracts/access/Ownable.sol";
-
-contract MIDI is ERC1155, ERC1155Supply {
+contract MIDI is ERC1155, ERC1155Supply, IMIDI {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIds;
@@ -28,8 +27,8 @@ contract MIDI is ERC1155, ERC1155Supply {
         _mint(to, newItemId, amount, data);
     }
 
-    function uri(uint256 tokenId) public view override returns (string memory) {
-        return (_tokenURIs[tokenId]);
+    function currentTokenId() external view returns (uint256) {
+        return _tokenIds.current();
     }
 
     function _setTokenUri(uint256 tokenId, string memory tokenURI) private {
@@ -37,6 +36,10 @@ contract MIDI is ERC1155, ERC1155Supply {
     }
 
     //=================================== OVERRIDES ==============================================
+
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        return (_tokenURIs[tokenId]);
+    }
 
     function _beforeTokenTransfer(
         address operator,

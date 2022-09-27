@@ -6,13 +6,14 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "../listing/Listing.sol";
 import "../listing/IListing.sol";
+import "./IMarket.sol";
 
-contract Market is Ownable {
+contract Market is Ownable, IMarket {
     uint32 private _fee = 300; // basis points out of 10000
     address private _midi;
     address private _listing;
 
-    mapping(uint256 => address[]) private tokenIdToListing;
+    mapping(uint256 => address[]) private _tokenIdToListing;
 
     // mapping(uint256 => Listing[]) private tokenIdToListing;
 
@@ -24,17 +25,9 @@ contract Market is Ownable {
     // mapping(uint256 => mapping(uint256 => Listing)) private test2;
     // mapping(uint256 => uint256) private listingCount;
 
-    event FeeUpdated(uint32 fee);
-    event ListingCreated(
-        uint256 tokenId,
-        address listing,
-        uint256 amount,
-        address user
-    );
-    event MidiAddressUpdated(address midi);
-
-    constructor() {
+    constructor(address midi_) {
         _listing = address(new Listing());
+        _midi = midi_;
     }
 
     function createListing(
@@ -61,19 +54,19 @@ contract Market is Ownable {
         address clone = Clones.clone(_listing);
         Listing(clone).initialize(price, msg.sender, amount, _midi);
 
-        tokenIdToListing[id].push(clone);
+        _tokenIdToListing[id].push(clone);
 
         IERC1155(_midi).safeTransferFrom(msg.sender, clone, id, amount, data);
 
-        emit ListingCreated(id, clone, amount, msg.sender);
+        emit ListingCreated(id, clone, amount, price, msg.sender);
     }
 
-    function fetchListingsById(uint256 id)
+    function tokenIdToListing(uint256 id)
         external
         view
         returns (address[] memory)
     {
-        return tokenIdToListing[id];
+        return _tokenIdToListing[id];
     }
 
     // function cancelListing(address listing) external {
