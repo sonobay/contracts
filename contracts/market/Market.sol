@@ -52,7 +52,7 @@ contract Market is Ownable, IMarket {
         );
 
         address clone = Clones.clone(_listing);
-        Listing(clone).initialize(price, msg.sender, amount, _midi);
+        Listing(clone).initialize(price, msg.sender, amount, _midi, id);
 
         _tokenIdToListing[id].push(clone);
 

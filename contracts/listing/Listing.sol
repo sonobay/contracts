@@ -31,7 +31,8 @@ contract Listing is Ownable, Initializable, ERC1155Holder {
         uint256 price_,
         address seller_,
         uint256 amount_,
-        address midi_
+        address midi_,
+        uint256 tokenId_
     ) public initializer {
         _price = price_;
         _seller = seller_;
@@ -39,6 +40,7 @@ contract Listing is Ownable, Initializable, ERC1155Holder {
         _availableAmount = amount_;
         _listed = true;
         _nft = midi_;
+        _tokenId = tokenId_;
     }
 
     function buyItems(uint256 amount) external payable {
