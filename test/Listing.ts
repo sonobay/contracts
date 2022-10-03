@@ -25,20 +25,53 @@ describe("Listing", function () {
   //   return { lock, unlockTime, lockedAmount, owner, otherAccount };
   // }
 
-  async function deploy() {
+  async function setup() {
+    console.log("111");
     const [owner, otherAccount] = await ethers.getSigners();
 
-    const Midi = await ethers.getContractFactory("Midi");
+    console.log("444");
+
+    // try {
+    //   console.log("whyyyyy");
+    //   const Midi = await ethers.getContractFactory("MIDI");
+    //   console.log("Midi is: ", Midi);
+    // } catch (error) {
+    //   console.log("error is: ", error);
+    // }
+    const Midi = await ethers.getContractFactory("MIDI");
+    console.log("Midi is: ", Midi);
+    console.log("555");
     const midi = (await Midi.deploy()) as MIDI;
 
-    const Market = await ethers.getContractFactory("Market");
-    const market = (await Market.deploy(midi.address)) as Market;
+    console.log("333");
 
-    return { midi, market, owner, otherAccount };
+    const Market = await ethers.getContractFactory("Market");
+    const market = (await Market.deploy(
+      midi.address,
+      [owner.address],
+      [100]
+    )) as Market;
+
+    console.log("222");
+
+    // mint midi
+    const res = await midi.mint(owner.address, 20, "", []);
+    await res.wait();
+
+    const formattedPrice = utils.parseUnits(String(1));
+
+    const listingRes = await market.createListing(1, 10, formattedPrice, []);
+    console.debug("listing res is: ", listingRes);
+    const listing = await listingRes.wait();
+    console.debug("listing is: ", listing);
+
+    return { midi, market, owner, otherAccount, listing };
   }
 
   describe("Create Listing", async function () {
-    const { midi, market, owner } = await loadFixture(deploy);
+    console.log("hello world");
+    const { midi, market, owner, listing } = await loadFixture(setup);
+    console.log("listing is: ", listing);
 
     const res = await midi.mint(owner.address, 20, "", []);
     await res.wait();
@@ -47,6 +80,7 @@ describe("Listing", function () {
 
     const listingRes = await market.createListing(1, 10, formattedPrice, []);
     await listingRes.wait();
+    expect(listingRes).to.eq(1);
 
     // market.createListing();
   });

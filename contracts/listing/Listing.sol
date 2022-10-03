@@ -6,8 +6,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "../market/IMarket.sol";
+import "./IListing.sol";
 
-contract Listing is Ownable, Initializable, ERC1155Holder {
+contract Listing is Ownable, Initializable, ERC1155Holder, IListing {
     uint256 private _price;
     address private _seller;
     uint256 private _totalAmount;
@@ -71,6 +72,8 @@ contract Listing is Ownable, Initializable, ERC1155Holder {
             remaining,
             ""
         );
+
+        emit ListingCanceled();
     }
 
     function withdraw() external {
@@ -78,8 +81,10 @@ contract Listing is Ownable, Initializable, ERC1155Holder {
 
         uint256 feeAmount = (_price * IMarket(owner()).fee()) / 10_000;
 
-        payable(owner()).transfer(feeAmount);
+        // payable(owner()).transfer(feeAmount);
+        payable(IMarket(owner()).paymentSplitter()).transfer(feeAmount);
         payable(_msgSender()).transfer(address(this).balance - feeAmount);
+        emit FundsWithdrew(address(this).balance - feeAmount);
     }
 
     function price() external view returns (uint256) {
@@ -104,5 +109,9 @@ contract Listing is Ownable, Initializable, ERC1155Holder {
 
     function nftAddress() external view returns (address) {
         return _nft;
+    }
+
+    function listed() external view returns (bool) {
+        return _listed;
     }
 }

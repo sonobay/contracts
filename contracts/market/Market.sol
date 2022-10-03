@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "../listing/Listing.sol";
 import "../listing/IListing.sol";
 import "./IMarket.sol";
@@ -12,22 +13,18 @@ contract Market is Ownable, IMarket {
     uint32 private _fee = 300; // basis points out of 10000
     address private _midi;
     address private _listing;
+    address private _paymentSplitter;
 
     mapping(uint256 => address[]) private _tokenIdToListing;
 
-    // mapping(uint256 => Listing[]) private tokenIdToListing;
-
-    // // attempt 1
-    // mapping(uint256 => mapping(address => Listing)) private test;
-    // mapping(uint256 => address[]) private midiItemSellers;
-
-    // // this might work
-    // mapping(uint256 => mapping(uint256 => Listing)) private test2;
-    // mapping(uint256 => uint256) private listingCount;
-
-    constructor(address midi_) {
+    constructor(
+        address midi_,
+        address[] memory payees_,
+        uint256[] memory shares_
+    ) {
         _listing = address(new Listing());
         _midi = midi_;
+        _paymentSplitter = address(new PaymentSplitter(payees_, shares_));
     }
 
     function createListing(
@@ -94,5 +91,23 @@ contract Market is Ownable, IMarket {
     function setMidiAddress(address newAddress) external onlyOwner {
         _midi = newAddress;
         emit MidiAddressUpdated(_midi);
+    }
+
+    function createNewPaymentSplitter(
+        address[] memory payees_,
+        uint256[] memory shares_
+    ) external onlyOwner {
+        address _oldAddress = _paymentSplitter;
+        _paymentSplitter = address(new PaymentSplitter(payees_, shares_));
+        emit PaymentSplitterUpdated(
+            _oldAddress,
+            _paymentSplitter,
+            payees_,
+            shares_
+        );
+    }
+
+    function paymentSplitter() external view returns (address) {
+        return _paymentSplitter;
     }
 }

@@ -11,8 +11,16 @@ interface IMarket {
         address indexed user
     );
     event MidiAddressUpdated(address midi);
+    event PaymentSplitterUpdated(
+        address previousAddress,
+        address newAddress,
+        address[] payees,
+        uint256[] shares
+    );
 
     function fee() external view returns (uint32);
 
     function midi() external view returns (address);
+
+    function paymentSplitter() external view returns (address);
 }
