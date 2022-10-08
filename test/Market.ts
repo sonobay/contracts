@@ -34,7 +34,7 @@ describe("Market", function () {
 
         const prevPaymentSplitter = await market.paymentSplitter();
 
-        expect(market.createNewPaymentSplitter([owner.address], [100]))
+        await expect(market.createNewPaymentSplitter([owner.address], [100]))
           .to.emit(market, "PaymentSplitterUpdated")
           .withArgs(prevPaymentSplitter, anyValue, [owner.address], [100]);
       });
@@ -59,8 +59,8 @@ describe("Market", function () {
       it("should update the value", async () => {
         const { market } = await loadFixture(setup);
         const newFee = 500;
-        expect(market.setFee(newFee))
-          .to.emit(market, "MidiAddressUpdated")
+        await expect(market.setFee(newFee))
+          .to.emit(market, "FeeUpdated")
           .withArgs(newFee);
       });
 
@@ -79,10 +79,10 @@ describe("Market", function () {
       });
 
       it("should successfully update value", async () => {
-        const { market } = await loadFixture(setup);
-        expect(market.setMidiAddress(constants.AddressZero))
-          .to.emit(market, "setMidiAddress")
-          .withArgs(constants.AddressZero);
+        const { market, otherAccount } = await loadFixture(setup);
+        await expect(market.setMidiAddress(otherAccount.address))
+          .to.emit(market, "MidiAddressUpdated")
+          .withArgs(otherAccount.address);
       });
 
       it("should fail when non-owner tries to update MIDI address", async () => {
@@ -110,7 +110,7 @@ describe("Market", function () {
           price,
           []
         );
-        expect(listing)
+        await expect(listing)
           .to.emit(market, "ListingCreated")
           .withArgs(tokenId, anyValue, amountToSell, price, owner.address);
       });
@@ -148,7 +148,7 @@ describe("Market", function () {
           []
         );
 
-        expect(listing)
+        await expect(listing)
           .to.emit(market, "ListingCreated")
           .withArgs(tokenId, anyValue, amountToSell, price, owner.address);
 

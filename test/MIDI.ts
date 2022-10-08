@@ -33,7 +33,7 @@ describe("MIDI", function () {
 
       const test = await midi.mint(owner.address, 1000, ipfsPath, []);
 
-      expect(test)
+      await expect(test)
         .to.emit(midi, "TransferSingle")
         .withArgs(
           owner.address,
