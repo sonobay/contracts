@@ -57,5 +57,48 @@ describe("MIDI", function () {
       await midi.mint(owner.address, 1000, ipfsPath, []);
       expect(await midi.uri(1)).to.eq(ipfsPath);
     });
+
+    it("Should burn single token", async () => {
+      const { midi, owner } = await loadFixture(setup);
+
+      const amountToBurn = 1;
+      const tokenId = 1;
+
+      await midi.mint(owner.address, 10, ipfsPath, []);
+
+      const burn = await midi.burn(owner.address, tokenId, amountToBurn);
+
+      await expect(burn)
+        .to.emit(midi, "TransferSingle")
+        .withArgs(
+          owner.address,
+          owner.address,
+          ethers.constants.AddressZero,
+          tokenId,
+          amountToBurn
+        );
+    });
+
+    it("Should burn batch token", async () => {
+      const { midi, owner } = await loadFixture(setup);
+
+      const amountsToBurn = [5, 7];
+      const tokenIds = [1, 2];
+
+      await midi.mint(owner.address, 10, ipfsPath, []);
+      await midi.mint(owner.address, 10, ipfsPath, []);
+
+      const burn = await midi.burnBatch(owner.address, tokenIds, amountsToBurn);
+
+      await expect(burn)
+        .to.emit(midi, "TransferBatch")
+        .withArgs(
+          owner.address,
+          owner.address,
+          ethers.constants.AddressZero,
+          tokenIds,
+          amountsToBurn
+        );
+    });
   });
 });
