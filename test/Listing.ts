@@ -19,7 +19,7 @@ describe("Listing", function () {
     const Midi = await ethers.getContractFactory("MIDI");
     const midi = (await Midi.deploy()) as MIDI;
 
-    const Market = await ethers.getContractFactory("Market");
+    const Market = await ethers.getContractFactory("MIDIMarket");
     const market = (await Market.deploy(
       midi.address,
       [owner.address],

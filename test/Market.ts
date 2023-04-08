@@ -16,7 +16,7 @@ describe("Market", function () {
     const Midi = await ethers.getContractFactory("MIDI");
     const midi = await Midi.deploy();
 
-    const Market = await ethers.getContractFactory("Market");
+    const Market = await ethers.getContractFactory("MIDIMarket");
     const market = await Market.deploy(midi.address, [owner.address], [100]);
 
     return { midi, market, owner, otherAccount };

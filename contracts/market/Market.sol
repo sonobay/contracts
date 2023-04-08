@@ -9,7 +9,7 @@ import "../listing/Listing.sol";
 import "../listing/IListing.sol";
 import "./IMarket.sol";
 
-contract Market is Ownable, IMarket {
+contract MIDIMarket is Ownable, IMarket {
     uint32 private _fee = 300; // basis points out of 10000
     address private _midi;
     address private _listing;
