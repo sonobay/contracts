@@ -29,11 +29,9 @@ describe("MIDI", function () {
       const { midi, owner } = await loadFixture(setup);
       const amount = 1000;
 
-      // midi.mint(owner.address, amount, ipfsPath, []);
+      const mint = await midi.mint(owner.address, 1000, ipfsPath, []);
 
-      const test = await midi.mint(owner.address, 1000, ipfsPath, []);
-
-      await expect(test)
+      await expect(mint)
         .to.emit(midi, "TransferSingle")
         .withArgs(
           owner.address,
