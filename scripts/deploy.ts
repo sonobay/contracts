@@ -3,6 +3,26 @@ import { MIDI } from "../typechain-types";
 
 async function main() {
   const MIDI = await ethers.getContractFactory("MIDI");
+
+  // estimate costs
+
+  const signer = MIDI.signer;
+
+  const signerBalance = await signer.getBalance();
+  console.log("signer balance is: ", signerBalance.toString());
+  const address = await MIDI.signer.getAddress();
+  console.log("address is: ", address);
+
+  const estimatedGas3 = await MIDI.signer.estimateGas(
+    MIDI.getDeployTransaction()
+  );
+  console.log("estimated gas is: ", estimatedGas3.toString());
+
+  const gasPrice = await signer.getGasPrice();
+
+  const deploymentPrice = gasPrice.mul(estimatedGas3);
+  console.log("estimated cost: ", deploymentPrice.toString());
+
   const midi = (await MIDI.deploy()) as MIDI;
   await midi.deployed();
 
@@ -32,3 +52,5 @@ main().catch((error) => {
 // 0x32CF292cD6ebE04158745befFfDf774758E57EB5
 
 // 0x48F5Ec0732c00054BbDcF95D78EE1e6b353665E2
+
+// new MIDI address: 0x29c45A223f15da5cfCABC761e67E352Dc672a25a

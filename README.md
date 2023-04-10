@@ -1,13 +1,20 @@
-# Sample Hardhat Project
+# Sonobay MIDI Marketplace
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Create MIDI NFTs and exchange them via marketplace listings.
 
-Try running some of the following tasks:
+## Develop
 
 ```shell
-npx hardhat help
 npx hardhat test
 GAS_REPORT=true npx hardhat test
 npx hardhat node
-npx hardhat run scripts/deploy.ts
 ```
+
+## Deploy
+
+```shell
+npx hardhat run --network goerli scripts/deploy.ts
+```
+
+Once deployed, the MIDI address and Marketplace address will be logged in the console.
+
