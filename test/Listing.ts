@@ -2,7 +2,7 @@ import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { Market, MIDI, Listing, Listing__factory } from "../typechain-types";
+import { MIDIMarket, MIDI, Listing } from "../typechain-types";
 import { BigNumber, Contract, utils } from "ethers";
 import * as ListingArtifact from "../artifacts/contracts/listing/Listing.sol/Listing.json";
 import * as PaymentSplitterArtifact from "../artifacts/@openzeppelin/contracts/finance/PaymentSplitter.sol/PaymentSplitter.json";
@@ -24,7 +24,7 @@ describe("Listing", function () {
       midi.address,
       [owner.address],
       [100]
-    )) as Market;
+    )) as MIDIMarket;
 
     // mint midi
     const res = await midi.mint(owner.address, 20, "", []);

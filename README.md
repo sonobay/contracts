@@ -10,6 +10,8 @@ GAS_REPORT=true npx hardhat test
 npx hardhat node
 ```
 
+To see list of available tasks, run `npx hardhat`
+
 ## Deploy
 
 ```shell
