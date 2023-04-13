@@ -1,12 +1,5 @@
 import { task } from "hardhat/config";
-
-interface EtherScanCurrencyResponse {
-  status: string;
-  message: string;
-  result: {
-    ethusd: string;
-  };
-}
+import { EtherScanCurrencyResponse } from "./types";
 
 task(
   "estimateDeployListing",
