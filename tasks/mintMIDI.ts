@@ -2,7 +2,7 @@ import { Contract } from "ethers";
 import { task, types } from "hardhat/config";
 import * as MIDIArtifact from "../artifacts/contracts/midi/MIDI.sol/MIDI.json";
 
-task("mintMIDI", "Mints MIDI tokens")
+task("mintMidi", "Mints MIDI tokens")
   .addParam("midi", "Address of the MIDI contract", undefined, types.string)
   .addParam("metadataURI", "URI of the metadata", undefined, types.string)
   .addParam("amount", "Amount of tokens to mint", 1, types.int)

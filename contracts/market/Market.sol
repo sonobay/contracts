@@ -19,11 +19,12 @@ contract MIDIMarket is Ownable, IMarket {
 
     constructor(
         address midi_,
+        address listing_,
         address[] memory payees_,
         uint256[] memory shares_
     ) {
-        _listing = address(new Listing());
         _midi = midi_;
+        _listing = listing_;
         _paymentSplitter = address(new PaymentSplitter(payees_, shares_));
     }
 
@@ -58,22 +59,21 @@ contract MIDIMarket is Ownable, IMarket {
         emit ListingCreated(id, clone, amount, price, msg.sender);
     }
 
-    function tokenIdToListing(uint256 id)
-        external
-        view
-        returns (address[] memory)
-    {
-        return _tokenIdToListing[id];
+    /**
+     * @dev Sets the address of the listing contract
+     * used to clone new listings
+     * @param newAddress The address of the listing contract
+     */
+    function setListingAddress(address newAddress) external onlyOwner {
+        _listing = newAddress;
+        emit ListingAddressUpdated(_listing);
     }
 
-    // function cancelListing(address listing) external {
-    //     require(IListing(listing).seller == msg.sender, "Not authorized");
-    //     IListing(listing).cancelListing();
-    // }
-
-    // function buyItems(address listing, uint256 amount) external {}
-
-    // function withdrawProceeds() external {}
+    function tokenIdToListing(
+        uint256 id
+    ) external view returns (address[] memory) {
+        return _tokenIdToListing[id];
+    }
 
     function fee() external view returns (uint32) {
         return _fee;

@@ -17,6 +17,7 @@ interface IMarket {
         address[] payees,
         uint256[] shares
     );
+    event ListingAddressUpdated(address listing);
 
     function fee() external view returns (uint32);
 

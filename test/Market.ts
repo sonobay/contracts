@@ -16,8 +16,16 @@ describe("Market", function () {
     const Midi = await ethers.getContractFactory("MIDI");
     const midi = await Midi.deploy();
 
+    const Listing = await ethers.getContractFactory("Listing");
+    const listing = await Listing.deploy();
+
     const Market = await ethers.getContractFactory("MIDIMarket");
-    const market = await Market.deploy(midi.address, [owner.address], [100]);
+    const market = await Market.deploy(
+      midi.address,
+      listing.address,
+      [owner.address],
+      [100]
+    );
 
     return { midi, market, owner, otherAccount };
   }
@@ -113,6 +121,22 @@ describe("Market", function () {
         await expect(listing)
           .to.emit(market, "ListingCreated")
           .withArgs(tokenId, anyValue, amountToSell, price, owner.address);
+      });
+
+      it("should fail to update the listing address if it is not the owner", async () => {
+        const { market, otherAccount } = await loadFixture(setup);
+
+        expect(
+          market.setListingAddress(otherAccount.address)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+      });
+
+      it("should successfully update the listing address if it is the owner", async () => {
+        const { market } = await loadFixture(setup);
+
+        await expect(market.setListingAddress(constants.AddressZero))
+          .to.emit(market, "ListingAddressUpdated")
+          .withArgs(constants.AddressZero);
       });
 
       it("should fail if user balance has insufficient NFTs", async () => {

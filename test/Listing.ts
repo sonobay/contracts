@@ -19,9 +19,14 @@ describe("Listing", function () {
     const Midi = await ethers.getContractFactory("MIDI");
     const midi = (await Midi.deploy()) as MIDI;
 
+    const Listing = await ethers.getContractFactory("Listing");
+    const listingBase = await Listing.deploy();
+    await listingBase.deployed();
+
     const Market = await ethers.getContractFactory("MIDIMarket");
     const market = (await Market.deploy(
       midi.address,
+      listingBase.address,
       [owner.address],
       [100]
     )) as MIDIMarket;
@@ -41,7 +46,7 @@ describe("Listing", function () {
     //   (_event) => _event.event === "ListingCreated"
     // );
 
-    const Listing = await ethers.getContractFactory("Listing");
+    // const Listing = await ethers.getContractFactory("Listing");
     // const price = 1_000_000_000_000_000;
     const listing = await upgrades.deployProxy(Listing, [
       price,

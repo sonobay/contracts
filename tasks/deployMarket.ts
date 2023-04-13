@@ -4,6 +4,12 @@ import { MIDIMarket__factory } from "../typechain-types";
 task("deployMarket", "Deploys Market contract")
   .addParam("midi", "Address of the MIDI contract", undefined, types.string)
   .addParam(
+    "listing",
+    "Address of the Listing contract",
+    undefined,
+    types.string
+  )
+  .addParam(
     "beneficiaries",
     "Array of addresses for Market Payment Splitter",
     "[]",
@@ -19,15 +25,27 @@ task("deployMarket", "Deploys Market contract")
     async (
       {
         midi,
+        listing,
         beneficiaries,
         beneficiariesShares,
-      }: { midi: string; beneficiaries: string; beneficiariesShares: string },
+      }: {
+        midi: string;
+        listing: string;
+        beneficiaries: string;
+        beneficiariesShares: string;
+      },
       { ethers, run }
     ) => {
       if (!midi) {
         console.error("No MIDI address found");
         return;
       }
+
+      if (!listing) {
+        console.error("No Listing address found");
+        return;
+      }
+
       const beneficiaryAddresses: string[] =
         JSON.parse(beneficiaries.replace(/'/g, '"')) ?? [];
 
@@ -35,9 +53,14 @@ task("deployMarket", "Deploys Market contract")
 
       const Market = await ethers.getContractFactory("MIDIMarket");
 
-      await estimateCost(Market, midi, beneficiaryAddresses, shares);
+      await estimateCost(Market, midi, listing, beneficiaryAddresses, shares);
 
-      const market = await Market.deploy(midi, beneficiaryAddresses, shares);
+      const market = await Market.deploy(
+        midi,
+        listing,
+        beneficiaryAddresses,
+        shares
+      );
       await market.deployed();
 
       console.log("market address is: ", market.address);
@@ -47,6 +70,7 @@ task("deployMarket", "Deploys Market contract")
 const estimateCost = async (
   Market: MIDIMarket__factory,
   midiAddress: string,
+  listingAddress: string,
   marketBeneficiaries: string[],
   beneficiarySplit: number[]
 ) => {
@@ -60,6 +84,7 @@ const estimateCost = async (
   const estimatedGas = await Market.signer.estimateGas(
     Market.getDeployTransaction(
       midiAddress,
+      listingAddress,
       marketBeneficiaries,
       beneficiarySplit
     )
