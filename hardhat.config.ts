@@ -20,6 +20,10 @@ const config: HardhatUserConfig = {
       url: process.env.SEPOLIA_URL || "",
       accounts: { mnemonic: MNENOMIC ?? "" },
     },
+    mainnet: {
+      url: process.env.MAINNET_URL || "",
+      accounts: { mnemonic: MNENOMIC ?? "" },
+    },
   },
   etherscan: {
     apiKey: ETHERSCAN_API_KEY,
