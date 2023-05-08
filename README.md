@@ -12,6 +12,12 @@ Create MIDI NFTs and exchange them via marketplace listings.
 | Listing  | 0x95E3fF1249F507ee1cC89fD8912E2A9d6dA66854 |
 | Market   | 0xFaD23945aFa4dF5C7e1F4532C718A125328372e7 |
 
+### Goerli
+
+| Contract | Address                                    |
+| :------: | :----------------------------------------: |
+| MIDI     | 0x29c45A223f15da5cfCABC761e67E352Dc672a25a |
+
 ## Develop
 
 ```shell
