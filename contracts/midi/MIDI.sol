@@ -31,11 +31,7 @@ contract MIDI is ERC1155, ERC1155Supply, IMIDI {
         return _tokenIds.current();
     }
 
-    function burn(
-        address from,
-        uint256 id,
-        uint256 amount
-    ) external {
+    function burn(address from, uint256 id, uint256 amount) external {
         _burn(from, id, amount);
     }
 

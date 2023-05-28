@@ -22,6 +22,7 @@ task(
   console.log("estimated gas is: ", estimatedGas.toString());
 
   const gasPrice = await signer.getGasPrice();
+  console.log("estimated gas price is: ", gasPrice.toString());
 
   const deploymentPrice = gasPrice.mul(estimatedGas);
   console.log("estimated cost in WEI: ", deploymentPrice.toString());
