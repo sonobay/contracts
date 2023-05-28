@@ -4,6 +4,12 @@ Create MIDI NFTs and exchange them via marketplace listings.
 
 ## Addresses
 
+### Mainnet
+
+| Contract | Address                                    |
+| :------: | :----------------------------------------: |
+| MIDI     | 0x8087aB2Aa455f408CdF22837Fbf951d232f39D33 |
+
 ### Sepolia
 
 | Contract | Address                                    |

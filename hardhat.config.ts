@@ -14,7 +14,9 @@ const config: HardhatUserConfig = {
   networks: {
     goerli: {
       url: process.env.GOERLI_URL || "",
-      accounts: { mnemonic: MNENOMIC ?? "" },
+      accounts: {
+        mnemonic: MNENOMIC ?? "",
+      },
     },
     sepolia: {
       url: process.env.SEPOLIA_URL || "",
@@ -22,7 +24,10 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url: process.env.MAINNET_URL || "",
-      accounts: { mnemonic: MNENOMIC ?? "" },
+      accounts: {
+        mnemonic: MNENOMIC ?? "",
+        initialIndex: 2,
+      },
     },
   },
   etherscan: {
