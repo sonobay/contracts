@@ -29,8 +29,8 @@ Create MIDI NFTs and exchange them via marketplace listings.
 | Contract | Address                                    |
 | :------: | :----------------------------------------: |
 | MIDI     | 0x8087aB2Aa455f408CdF22837Fbf951d232f39D33 |
-| Listing  | 0xb688197901a854eE6A31e91F226108f476D40e6b |
-| Market   | _ |
+| Listing  | 0x107C49B15B4B7f8B68Ba9fd56704D8FbBB5DF1fF |
+| Market   | 0x4f196fa9774aa52DA465e19DD1986e66805067b8 |
 
 ## Develop
 
@@ -63,7 +63,7 @@ npx hardhat deployListing
 ### Deploy Market
 
 ```shell
-npx hardhat deployMarket --midi "MIDI_ADDRESS" --listing "LISTING_ADDRESS" --beneficiaries "['0x0', '0x1']" --beneficiaries-shares "[50, 50]"
+npx hardhat deployMarket --midi "MIDI_ADDRESS" --listing "LISTING_ADDRESS"
 ```
 
 This assumes the MIDI and Listing contracts are already deployed. It allows to set market fee beneficiaries and their shares.
