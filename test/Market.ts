@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 describe("Market", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshopt in every test.
+  // and reset Hardhat Network to that snapshot in every test.
 
   async function setup() {
     // Contracts are deployed using the first signer/account by default
@@ -20,43 +20,12 @@ describe("Market", function () {
     const listing = await Listing.deploy();
 
     const Market = await ethers.getContractFactory("MIDIMarket");
-    const market = await Market.deploy(
-      midi.address,
-      listing.address,
-      [owner.address],
-      [100]
-    );
+    const market = await Market.deploy(midi.address, listing.address);
 
     return { midi, market, owner, otherAccount };
   }
 
   describe("Market", function () {
-    describe("Payment Splitter", () => {
-      it("Should be initialized", async () => {
-        const { market } = await loadFixture(setup);
-        expect(await market.paymentSplitter()).to.exist;
-      });
-
-      it("should update the value", async () => {
-        const { market, owner } = await loadFixture(setup);
-
-        const prevPaymentSplitter = await market.paymentSplitter();
-
-        await expect(market.createNewPaymentSplitter([owner.address], [100]))
-          .to.emit(market, "PaymentSplitterUpdated")
-          .withArgs(prevPaymentSplitter, anyValue, [owner.address], [100]);
-      });
-
-      it("should fail when non owner tries to update", async () => {
-        const { market, otherAccount } = await loadFixture(setup);
-        expect(
-          market
-            .connect(otherAccount)
-            .createNewPaymentSplitter([otherAccount.address], [100])
-        ).to.be.revertedWith("Ownable: caller is not the owner");
-      });
-    });
-
     describe("Fees", () => {
       it("should have initial value", async () => {
         const { market } = await loadFixture(setup);
@@ -185,6 +154,46 @@ describe("Market", function () {
         expect(await market.tokenIdToListing(1)).to.contain(
           listingCreatedEvent?.args?.listing
         );
+      });
+    });
+
+    describe("Withdraw from market", async () => {
+      it("should fail to withdraw if attempted by non-owner", async () => {
+        const { market, otherAccount } = await loadFixture(setup);
+
+        expect(
+          market.connect(otherAccount).withdrawTo(otherAccount.address, 100)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+      });
+
+      it("should fail to withdraw if amount is greater than balance", async () => {
+        const { market, owner } = await loadFixture(setup);
+
+        expect(market.withdrawTo(owner.address, 1)).to.be.revertedWith(
+          "Insufficient funds"
+        );
+      });
+
+      it("should successfully withdraw if amount is less than or equal to balance", async () => {
+        const { market, owner } = await loadFixture(setup);
+        let marketBalance = await owner.provider?.getBalance(market.address);
+
+        expect(marketBalance).to.eq(0);
+
+        const sendToMarketTx = await owner.sendTransaction({
+          to: market.address,
+          value: 100,
+        });
+        await sendToMarketTx.wait();
+
+        marketBalance = await owner.provider?.getBalance(market.address);
+
+        expect(marketBalance).to.eq(100);
+        await expect(market.withdrawTo(owner.address, 100))
+          .to.emit(market, "WithdrawTo")
+          .withArgs(owner.address, 100)
+          .to.changeEtherBalance(market.address, 0)
+          .to.changeEtherBalance(owner.address, 100);
       });
     });
   });

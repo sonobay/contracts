@@ -18,10 +18,11 @@ interface IMarket {
         uint256[] shares
     );
     event ListingAddressUpdated(address listing);
+    event WithdrawTo(address indexed to, uint256 amount);
 
     function fee() external view returns (uint32);
 
     function midi() external view returns (address);
 
-    function paymentSplitter() external view returns (address);
+    function withdrawTo(address payable to, uint256 amount) external;
 }

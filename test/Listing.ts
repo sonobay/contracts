@@ -26,9 +26,7 @@ describe("Listing", function () {
     const Market = await ethers.getContractFactory("MIDIMarket");
     const market = (await Market.deploy(
       midi.address,
-      listingBase.address,
-      [owner.address],
-      [100]
+      listingBase.address
     )) as MIDIMarket;
 
     // mint midi
@@ -178,16 +176,11 @@ describe("Listing", function () {
       const marketFee = 300;
       const feeAmount = BigNumber.from(cost).mul(marketFee).div(10_000);
       const expectedWithdraw = BigNumber.from(cost).sub(feeAmount);
-      const paymentSplitterAddress = await market.paymentSplitter();
-      const paymentSplitter = new Contract(
-        paymentSplitterAddress,
-        PaymentSplitterArtifact.abi
-      );
 
       await expect(listingContract.withdraw())
         .to.emit(listingContract, "FundsWithdrew")
         .withArgs(expectedWithdraw)
-        .to.changeEtherBalance(paymentSplitter.address, feeAmount)
+        .to.changeEtherBalance(market.address, feeAmount)
         .to.changeEtherBalance(owner.address, expectedWithdraw)
         .to.changeEtherBalance(
           listingAddress,

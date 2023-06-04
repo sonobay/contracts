@@ -85,7 +85,7 @@ contract Listing is Initializable, OwnableUpgradeable, ERC1155Holder, IListing {
         /**
          * Pay fee to market
          */
-        payable(IMarket(owner()).paymentSplitter()).transfer(feeAmount);
+        payable(owner()).transfer(feeAmount);
 
         /**
          * Send remaining to seller

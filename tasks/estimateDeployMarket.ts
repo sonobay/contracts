@@ -9,30 +9,14 @@ task("estimateDeployMarket", "Estimates cost of deploying MIDI contract")
     undefined,
     types.string
   )
-  .addParam(
-    "beneficiaries",
-    "Array of addresses for Market Payment Splitter",
-    "[]",
-    types.string
-  )
-  .addParam(
-    "beneficiariesShares",
-    "Array of numbers, how fees are divided, that corresponds with the above beneficiaries param",
-    "[]",
-    types.string
-  )
   .setAction(
     async (
       {
         midi,
         listing,
-        beneficiaries,
-        beneficiariesShares,
       }: {
         midi: string;
         listing: string;
-        beneficiaries: string;
-        beneficiariesShares: string;
       },
       { ethers }
     ) => {
@@ -47,13 +31,8 @@ task("estimateDeployMarket", "Estimates cost of deploying MIDI contract")
         ethers.utils.formatEther(signerBalance).toString()
       );
 
-      const beneficiaryAddresses: string[] =
-        JSON.parse(beneficiaries.replace(/'/g, '"')) ?? [];
-
-      const shares: number[] = JSON.parse(beneficiariesShares);
-
       const estimatedGas = await Market.signer.estimateGas(
-        Market.getDeployTransaction(midi, listing, beneficiaryAddresses, shares)
+        Market.getDeployTransaction(midi, listing)
       );
       console.log("estimated gas is: ", estimatedGas.toString());
 

@@ -13,19 +13,12 @@ contract MIDIMarket is Ownable, IMarket {
     uint32 private _fee = 300; // basis points out of 10000
     address private _midi;
     address private _listing;
-    address private _paymentSplitter;
 
     mapping(uint256 => address[]) private _tokenIdToListing;
 
-    constructor(
-        address midi_,
-        address listing_,
-        address[] memory payees_,
-        uint256[] memory shares_
-    ) {
+    constructor(address midi_, address listing_) {
         _midi = midi_;
         _listing = listing_;
-        _paymentSplitter = address(new PaymentSplitter(payees_, shares_));
     }
 
     function createListing(
@@ -93,21 +86,12 @@ contract MIDIMarket is Ownable, IMarket {
         emit MidiAddressUpdated(_midi);
     }
 
-    function createNewPaymentSplitter(
-        address[] memory payees_,
-        uint256[] memory shares_
-    ) external onlyOwner {
-        address _oldAddress = _paymentSplitter;
-        _paymentSplitter = address(new PaymentSplitter(payees_, shares_));
-        emit PaymentSplitterUpdated(
-            _oldAddress,
-            _paymentSplitter,
-            payees_,
-            shares_
-        );
+    function withdrawTo(address payable to, uint256 amount) external onlyOwner {
+        require(amount <= address(this).balance, "Insufficient funds");
+        (bool success, ) = to.call{value: address(this).balance}("");
+        require(success, "Transfer failed.");
+        emit WithdrawTo(to, amount);
     }
 
-    function paymentSplitter() external view returns (address) {
-        return _paymentSplitter;
-    }
+    receive() external payable {}
 }
