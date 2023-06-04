@@ -7,7 +7,7 @@ import "./tasks";
 
 dotenv.config();
 
-const { ETHERSCAN_API_KEY, MNENOMIC } = process.env;
+const { POLYSCAN_API_KEY, ETHERSCAN_API_KEY, MNENOMIC } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.9",
@@ -29,9 +29,30 @@ const config: HardhatUserConfig = {
         initialIndex: 2,
       },
     },
+    polygon: {
+      url: process.env.POLYGON_MAINNET_URL || "",
+      accounts: {
+        mnemonic: MNENOMIC ?? "",
+        initialIndex: 2,
+      },
+      chainId: 137,
+    },
+    polygonMumbai: {
+      url: process.env.POLYGON_MUMBAI_URL || "",
+      accounts: {
+        mnemonic: MNENOMIC ?? "",
+        initialIndex: 2,
+      },
+      chainId: 80001,
+    },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      polygon: POLYSCAN_API_KEY ?? "",
+      polygonMumbai: POLYSCAN_API_KEY ?? "",
+      mainnet: ETHERSCAN_API_KEY ?? "",
+      sepolia: ETHERSCAN_API_KEY ?? "",
+    },
   },
 };
 
