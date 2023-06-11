@@ -32,6 +32,14 @@ Create MIDI NFTs and exchange them via marketplace listings.
 | Listing  | 0x107C49B15B4B7f8B68Ba9fd56704D8FbBB5DF1fF |
 | Market   | 0x4f196fa9774aa52DA465e19DD1986e66805067b8 |
 
+### Polygon
+
+| Contract | Address                                    |
+| :------: | :----------------------------------------: |
+| MIDI     | 0x8087aB2Aa455f408CdF22837Fbf951d232f39D33 |
+| Listing  | 0xb688197901a854eE6A31e91F226108f476D40e6b |
+| Market   | 0x107C49B15B4B7f8B68Ba9fd56704D8FbBB5DF1fF |
+
 ## Develop
 
 ```shell
