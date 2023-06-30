@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 interface IMarket {
     event FeeUpdated(uint32 fee);
     event ListingCreated(
+        address tokenAddress,
         uint256 indexed tokenId,
         address listing,
         uint256 amount,
@@ -18,6 +19,7 @@ interface IMarket {
         uint256[] shares
     );
     event ListingAddressUpdated(address listing);
+    event CustomListingAddressUpdated(address customListing);
     event WithdrawTo(address indexed to, uint256 amount);
 
     function fee() external view returns (uint32);
