@@ -3,7 +3,8 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
-import "./tasks";
+import "hardhat-gas-reporter"
+import "./tasks"
 
 dotenv.config();
 
@@ -53,6 +54,11 @@ const config: HardhatUserConfig = {
       mainnet: ETHERSCAN_API_KEY ?? "",
       sepolia: ETHERSCAN_API_KEY ?? "",
     },
+  },
+  gasReporter: {
+    currency: "USD",
+    gasPrice: 100,
+    enabled: true,
   },
 };
 

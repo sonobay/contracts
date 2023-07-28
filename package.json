@@ -27,6 +27,13 @@
     "typechain": "^8.1.0",
     "typescript": ">=4.5.0"
   },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "typechain": "hardhat typechain",
+    "coverage": "hardhat coverage",
+    "verify": "hardhat verify"
+  },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.2",
     "@openzeppelin/contracts-upgradeable": "^4.7.2"
