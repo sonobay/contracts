@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
+
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 pragma solidity ^0.8.9;
 
-interface IListing {
+interface ICustomListing {
     event ListingCanceled();
     event FundsWithdrew(uint256 amount);
 
     function initialize(
+        address tokenAddress,
         uint256 price_,
         address seller_,
         address midi_,

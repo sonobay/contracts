@@ -5,23 +5,22 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
-import "../listing/Listing.sol";
 import "../listing/IListing.sol";
+import "../listing/ICustomListing.sol";
 import "./IMarket.sol";
 
 contract MIDIMarket is Ownable, IMarket {
     uint32 private _fee = 300; // basis points out of 10000
     address private _midi;
-    address private _listing;
 
     mapping(uint256 => address[]) private _tokenIdToListing;
 
-    constructor(address midi_, address listing_) {
+    constructor(address midi_) {
         _midi = midi_;
-        _listing = listing_;
     }
 
     function createListing(
+        address _listing,
         uint256 id,
         uint256 amount,
         uint256 price,
@@ -43,24 +42,58 @@ contract MIDIMarket is Ownable, IMarket {
         );
 
         address clone = Clones.clone(_listing);
-        Listing(clone).initialize(price, msg.sender, _midi, id);
+        IListing(clone).initialize(price, msg.sender, _midi, id);
 
         _tokenIdToListing[id].push(clone);
 
         IERC1155(_midi).safeTransferFrom(msg.sender, clone, id, amount, data);
 
-        emit ListingCreated(id, clone, amount, price, msg.sender);
+        emit ListingCreated(address(0), id, clone, amount, price, msg.sender);
     }
 
-    /**
-     * @dev Sets the address of the listing contract
-     * used to clone new listings
-     * @param newAddress The address of the listing contract
-     */
-    function setListingAddress(address newAddress) external onlyOwner {
-        _listing = newAddress;
-        emit ListingAddressUpdated(_listing);
+    function createListing(
+        address tokenAddress,
+        address _listing,
+        uint256 id,
+        uint256 amount,
+        uint256 price,
+        bytes memory data
+    ) external {
+        // require user to own NFT
+        require(
+            IERC1155(_midi).balanceOf(msg.sender, id) >= amount,
+            "Insufficient funds"
+        );
+
+        // must set a price above 0
+        require(price > 0, "Invalid price");
+
+        // must have approved marketplace
+        require(
+            IERC1155(_midi).isApprovedForAll(msg.sender, address(this)),
+            "MIDI not approved"
+        );
+
+        address clone = Clones.clone(_listing);
+        ICustomListing(clone).initialize(tokenAddress, price, msg.sender, _midi, id);
+
+        _tokenIdToListing[id].push(clone);
+
+        IERC1155(_midi).safeTransferFrom(msg.sender, clone, id, amount, data);
+
+        emit ListingCreated(tokenAddress, id, clone, amount, price, msg.sender);
     }
+
+
+    // /**
+    //  * @dev Sets the address of the listing contract
+    //  * used to clone new listings
+    //  * @param newAddress The address of the listing contract
+    //  */
+    // function setListingAddress(address newAddress) external onlyOwner {
+    //     _listing = newAddress;
+    //     emit ListingAddressUpdated(_listing);
+    // }
 
     function tokenIdToListing(
         uint256 id

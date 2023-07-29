@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 interface IMarket {
     event FeeUpdated(uint32 fee);
     event ListingCreated(
+        address indexed listingAddress,
         uint256 indexed tokenId,
         address listing,
         uint256 amount,
