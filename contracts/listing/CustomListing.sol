@@ -7,10 +7,15 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "../market/IMarket.sol";
-import "./IListing.sol";
+import "./ICustomListing.sol";
 import "hardhat/console.sol";
 
-contract CustomListing is Initializable, OwnableUpgradeable, ERC1155Holder, IListing {
+contract CustomListing is
+    Initializable,
+    OwnableUpgradeable,
+    ERC1155Holder,
+    ICustomListing
+{
     uint256 private _price;
     address private _tokenAdress;
     address private _seller;
@@ -50,10 +55,18 @@ contract CustomListing is Initializable, OwnableUpgradeable, ERC1155Holder, ILis
             IERC1155(_nft).balanceOf(address(this), _tokenId) - amount >= 0,
             "amount not available"
         );
-        require(IERC20(_tokenAdress).allowance(msg.sender, address(this)) >= _price * amount, "approve first");
+        require(
+            IERC20(_tokenAdress).allowance(msg.sender, address(this)) >=
+                _price * amount,
+            "approve first"
+        );
         require(_listed == true, "Listing canceled");
 
-        IERC20(_tokenAdress).transferFrom(msg.sender, address(this), _price * amount);
+        IERC20(_tokenAdress).transferFrom(
+            msg.sender,
+            address(this),
+            _price * amount
+        );
 
         IERC1155(_nft).safeTransferFrom(
             address(this),
@@ -82,10 +95,11 @@ contract CustomListing is Initializable, OwnableUpgradeable, ERC1155Holder, ILis
 
     function withdraw() external {
         require(_msgSender() == _seller, "Unauthorized");
-        uint256 feeAmount = (IERC20(_tokenAdress).balanceOf(address(this)) * IMarket(owner()).fee()) /
-            10_000;
+        uint256 feeAmount = (IERC20(_tokenAdress).balanceOf(address(this)) *
+            IMarket(owner()).fee()) / 10_000;
 
-        uint256 userWithdraw = IERC20(_tokenAdress).balanceOf(address(this)) - feeAmount;
+        uint256 userWithdraw = IERC20(_tokenAdress).balanceOf(address(this)) -
+            feeAmount;
 
         /**
          * Pay fee to market
